@@ -40,13 +40,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
             <img 
                 src={LOGO_URL} 
                 alt="WebCash Logo" 
-                className="w-16 h-16 object-cover shadow-lg"
+                className="w-16 h-16 object-cover"
                 style={{ 
                   imageRendering: 'crisp-edges',
                   WebkitFontSmoothing: 'antialiased',
                   backfaceVisibility: 'hidden',
                   transform: 'translateZ(0)',
-                  borderRadius: '0'
+                  borderRadius: '0',
+                  border: 'none',
+                  boxShadow: 'none'
                 }}
             />
           </motion.div>
