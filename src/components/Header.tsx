@@ -19,6 +19,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
     { name: 'Contato', href: '#contato' }
   ];
 
+  // O link da logo que você forneceu
+  const LOGO_URL = 'https://avatars.githubusercontent.com/u/226414119?s=400&u=6645453081113cec86496aecde95a841251986a0e&v=4';
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -26,18 +29,26 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
       className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+        {/* Aumentei a altura do flex container para h-20 */}
+        <div className="flex justify-between items-center h-20"> 
+          {/* Logo Atualizada (Apenas Imagem) */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center space-x-2"
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="flex items-center space-x-2 cursor-pointer"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">W</span>
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">
-              WebCash
-            </span>
+            <img 
+                src={LOGO_URL} 
+                alt="WebCash Logo" 
+                className="w-16 h-16 object-cover shadow-lg"
+                style={{ 
+                  imageRendering: 'crisp-edges',
+                  WebkitFontSmoothing: 'antialiased',
+                  backfaceVisibility: 'hidden',
+                  transform: 'translateZ(0)',
+                  borderRadius: '0'
+                }}
+            />
           </motion.div>
 
           {/* Desktop Navigation */}
