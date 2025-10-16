@@ -170,7 +170,18 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle, isMenuOpen }) => {
                 ease: [0.16, 1, 0.3, 1],
                 delay: 1.3
               }}
-              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileHover={{ 
+                scale: 1.05,
+                rotate: [0, -8, 8, -8, 8, -8, 8, 0],
+                transition: { 
+                  rotate: { 
+                    duration: 1.5,
+                    ease: "easeInOut",
+                    repeat: Infinity,
+                    repeatType: "loop"
+                  }
+                }
+              }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
               className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
