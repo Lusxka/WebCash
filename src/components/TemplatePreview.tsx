@@ -255,8 +255,8 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
             </div>
 
             {/* Sidebar */}
-            <div className="w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 overflow-y-auto flex-shrink-0">
-              <div className="p-6 space-y-6">
+            <div className="w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 overflow-y-auto flex-shrink-0 flex flex-col">
+              <div className="p-6 space-y-6 flex-grow">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     Descrição
@@ -363,7 +363,7 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </ul>
                 </div>
 
-                <div className="space-y-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div className="space-y-3 pt-6 border-t border-gray-200 dark:border-gray-700 mt-auto">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
