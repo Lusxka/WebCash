@@ -49,8 +49,8 @@ const Features = () => {
       icon: Search,
       title: 'SEO Otimizado',
       description: 'Estrutura otimizada para mecanismos de busca desde o primeiro dia',
-      color: 'from-orange-400 to-orange-600',
-      bgGradient: 'from-orange-500/10 to-orange-600/5',
+      color: 'from-amber-400 to-yellow-500',
+      bgGradient: 'from-amber-500/10 to-yellow-500/5',
       stats: 'Top rankings'
     },
     {
@@ -91,7 +91,7 @@ const Features = () => {
       value: '99%', 
       label: 'Taxa de Satisfação',
       description: 'Avaliações positivas',
-      color: { bg: 'from-orange-500 to-red-600' }
+      color: { bg: 'from-amber-400 to-yellow-500' }
     },
     { 
       icon: Clock, 
@@ -107,37 +107,43 @@ const Features = () => {
       name: 'React', 
       description: 'Framework moderno para interfaces dinâmicas',
       color: 'from-cyan-400 to-blue-500',
-      gradient: 'from-cyan-500/10 to-blue-500/10'
+      gradient: 'from-cyan-500/10 to-blue-500/10',
+      icon: '⚛️'
     },
     { 
       name: 'TypeScript', 
       description: 'Código mais seguro e manutenível',
       color: 'from-blue-400 to-blue-600',
-      gradient: 'from-blue-500/10 to-blue-600/10'
+      gradient: 'from-blue-500/10 to-blue-600/10',
+      icon: '📘'
     },
     { 
       name: 'Tailwind CSS', 
       description: 'Design system profissional',
       color: 'from-teal-400 to-cyan-500',
-      gradient: 'from-teal-500/10 to-cyan-500/10'
+      gradient: 'from-teal-500/10 to-cyan-500/10',
+      icon: '🎨'
     },
     { 
       name: 'Next.js', 
       description: 'Performance e SEO otimizados',
-      color: 'from-gray-700 to-gray-900',
-      gradient: 'from-gray-500/10 to-gray-700/10'
+      color: 'from-slate-600 to-slate-800',
+      gradient: 'from-slate-500/10 to-slate-700/10',
+      icon: '▲'
     },
     { 
       name: 'Framer Motion', 
       description: 'Animações suaves e profissionais',
       color: 'from-pink-400 to-purple-500',
-      gradient: 'from-pink-500/10 to-purple-500/10'
+      gradient: 'from-pink-500/10 to-purple-500/10',
+      icon: '✨'
     },
     { 
       name: 'Vercel', 
       description: 'Hospedagem rápida e confiável',
-      color: 'from-gray-800 to-black',
-      gradient: 'from-gray-500/10 to-gray-800/10'
+      color: 'from-slate-700 to-slate-900',
+      gradient: 'from-slate-500/10 to-slate-800/10',
+      icon: '▲'
     }
   ];
 
@@ -169,7 +175,7 @@ const Features = () => {
             transform: scale(1);
           }
           50% {
-            transform: scale(1.2);
+            transform: scale(1.05);
           }
         }
         
@@ -188,6 +194,15 @@ const Features = () => {
           }
           50% {
             transform: translateX(5px);
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
           }
         }
         
@@ -220,19 +235,54 @@ const Features = () => {
         }
         
         .stat-card:hover {
-          transform: translateY(-8px);
+          transform: translateY(-6px) scale(1.02);
+        }
+        
+        .tech-card {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .tech-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          transition: left 0.5s;
+        }
+        
+        .tech-card:hover::before {
+          left: 100%;
         }
         
         .tech-card:hover {
-          transform: translateY(-3px);
+          transform: translateY(-6px);
         }
         
-        .tech-card:hover .tech-icon {
-          animation: rotate 0.4s ease-out;
+        .tech-card:hover .tech-icon-emoji {
+          transform: scale(1.2) rotate(10deg);
+        }
+        
+        .tech-icon-emoji {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .transition-all {
           transition: all 0.3s ease;
+        }
+        
+        .glass-effect {
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark .glass-effect {
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
       `}</style>
 
@@ -326,9 +376,9 @@ const Features = () => {
                 className="group relative stat-card transition-all"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color.bg} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-200 blur-xl`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color.bg} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-300 blur-xl`}></div>
                 
-                <div className="relative text-center bg-white dark:bg-gray-800 rounded-2xl p-8 border-2 border-gray-100 dark:border-gray-700 shadow-lg group-hover:shadow-2xl transition-all duration-200">
+                <div className="relative text-center bg-white dark:bg-gray-800 rounded-2xl p-8 border-2 border-gray-100 dark:border-gray-700 shadow-lg group-hover:shadow-2xl transition-all duration-300">
                   <div className="animate-float">
                     <div className={`w-16 h-16 bg-gradient-to-br ${stat.color.bg} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
                       <stat.icon className="w-8 h-8 text-white" />
@@ -352,22 +402,22 @@ const Features = () => {
           </div>
         </div>
 
-        {/* Technology Stack */}
+        {/* Technology Stack - REESTRUTURADO */}
         <div className="mb-24">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full mb-6">
+            <div className="inline-flex items-center px-5 py-2.5 glass-effect rounded-full mb-6 shadow-lg">
               <Code className="w-5 h-5 text-emerald-500 mr-2" />
-              <span className="text-gray-700 dark:text-gray-300 font-semibold">Stack Tecnológico</span>
+              <span className="text-gray-700 dark:text-gray-200 font-semibold tracking-wide">Stack Tecnológico</span>
             </div>
 
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h3 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               Tecnologias de{' '}
-              <span className="bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
                 Ponta
               </span>
             </h3>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Utilizamos as melhores tecnologias do mercado para garantir performance e qualidade
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
+              Utilizamos as melhores tecnologias do mercado para garantir performance e qualidade excepcional
             </p>
           </div>
 
@@ -377,20 +427,20 @@ const Features = () => {
                 key={index}
                 onMouseEnter={() => setHoveredTech(index)}
                 onMouseLeave={() => setHoveredTech(null)}
-                className="group relative tech-card transition-all"
+                className="group relative tech-card transition-all duration-300"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${tech.gradient} rounded-2xl transition-opacity duration-300 ${
+                <div className={`absolute inset-0 bg-gradient-to-br ${tech.gradient} rounded-2xl transition-all duration-300 ${
                   hoveredTech === index ? 'opacity-100' : 'opacity-0'
                 }`}></div>
 
-                <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-6 border-2 border-gray-100 dark:border-gray-700 hover:border-transparent shadow-lg hover:shadow-xl transition-all duration-200">
-                  <div className="flex items-start space-x-4 mb-4">
-                    <div className={`tech-icon w-12 h-12 bg-gradient-to-br ${tech.color} rounded-xl flex items-center justify-center shadow-lg flex-shrink-0`}>
-                      <Code className="w-6 h-6 text-white" />
+                <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-7 border-2 border-gray-100 dark:border-gray-700 hover:border-transparent shadow-lg hover:shadow-2xl transition-all duration-300 h-full">
+                  <div className="flex items-start gap-5">
+                    <div className={`tech-icon-emoji text-4xl flex items-center justify-center w-14 h-14 bg-gradient-to-br ${tech.color} rounded-xl shadow-xl`}>
+                      <span className="text-2xl">{tech.icon}</span>
                     </div>
                     
-                    <div className="flex-1">
-                      <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                         {tech.name}
                       </h4>
                       <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
@@ -399,10 +449,20 @@ const Features = () => {
                     </div>
                   </div>
 
-                  <div className={`h-1 bg-gradient-to-r ${tech.color} rounded-full transition-all duration-300 ${hoveredTech === index ? 'w-full' : 'w-0'}`} />
+                  <div className={`h-1.5 bg-gradient-to-r ${tech.color} rounded-full mt-5 transition-all duration-300 ${hoveredTech === index ? 'w-full opacity-100' : 'w-0 opacity-0'}`} />
+                  
+                  {/* Decorative corner */}
+                  <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${tech.color} opacity-5 rounded-bl-full transition-opacity duration-300 ${hoveredTech === index ? 'opacity-10' : 'opacity-0'}`}></div>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Tech Stack Footer Note */}
+          <div className="mt-12 text-center">
+            <p className="text-gray-500 dark:text-gray-400 text-sm italic">
+              Stack cuidadosamente selecionado para máxima eficiência, escalabilidade e performance
+            </p>
           </div>
         </div>
 
