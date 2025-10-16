@@ -224,11 +224,11 @@ const TemplateGrid: React.FC<TemplateGridProps> = ({ onTemplateSelect }) => {
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
                 onClick={() => onTemplateSelect(template)}
-                className={`group cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
-                  viewMode === 'list' ? 'flex' : ''
+                className={`group cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col ${
+                  viewMode === 'list' ? 'md:flex-row' : ''
                 }`}
               >
-                <div className={`${viewMode === 'list' ? 'w-1/3' : 'w-full'} aspect-video overflow-hidden`}>
+                <div className={`${viewMode === 'list' ? 'md:w-1/3' : 'w-full'} aspect-video overflow-hidden flex-shrink-0`}>
                   <img
                     src={template.image}
                     alt={template.name}
@@ -236,14 +236,14 @@ const TemplateGrid: React.FC<TemplateGridProps> = ({ onTemplateSelect }) => {
                   />
                 </div>
 
-                <div className={`p-6 ${viewMode === 'list' ? 'w-2/3 flex flex-col justify-between' : ''}`}>
-                  <div>
+                <div className={`p-6 flex flex-col ${viewMode === 'list' ? 'md:w-2/3' : 'flex-1'}`}>
+                  <div className="flex-1">
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                         {template.name}
                       </h3>
                       {template.featured && (
-                        <Star className="w-5 h-5 text-yellow-500 fill-current" />
+                        <Star className="w-5 h-5 text-yellow-500 fill-current flex-shrink-0 ml-2" />
                       )}
                     </div>
 
@@ -260,7 +260,7 @@ const TemplateGrid: React.FC<TemplateGridProps> = ({ onTemplateSelect }) => {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
                       <span>{template.pages.length} páginas</span>
                       <div className="flex items-center">
                         <div className="flex -space-x-1 mr-2">
@@ -276,7 +276,7 @@ const TemplateGrid: React.FC<TemplateGridProps> = ({ onTemplateSelect }) => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="mt-4 w-full flex items-center justify-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors group"
+                    className="w-full flex items-center justify-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors group mt-auto"
                   >
                     Ver Template
                     <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
