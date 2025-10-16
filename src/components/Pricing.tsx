@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Check, Star, Zap, Crown, ArrowRight, Shield } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Star, Zap, Crown, ArrowRight, Shield, ChevronDown, HelpCircle } from 'lucide-react';
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const plans = [
     {
@@ -122,6 +123,10 @@ const Pricing: React.FC = () => {
       answer: 'Não! Nossos templates vêm com documentação completa e suporte para facilitar a implementação.'
     }
   ];
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  };
 
   return (
     <section id="precos" className="py-20 bg-gray-50 dark:bg-gray-900">
@@ -282,18 +287,26 @@ const Pricing: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* FAQ */}
+        {/* FAQ Accordion */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mb-20"
         >
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-12">
-            Perguntas Frequentes
-          </h3>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mb-4">
+              <HelpCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Perguntas Frequentes
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Tire suas dúvidas sobre nossos planos e serviços
+            </p>
+          </div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-4">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
@@ -301,14 +314,51 @@ const Pricing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
               >
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                  {faq.question}
-                </h4>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {faq.answer}
-                </p>
+                <motion.button
+                  onClick={() => toggleFaq(index)}
+                  whileHover={{ scale: 1.01 }}
+                  className={`w-full text-left bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-all duration-300 ${
+                    openFaqIndex === index ? 'ring-2 ring-emerald-500' : ''
+                  }`}
+                >
+                  <div className="p-6 flex items-center justify-between">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white pr-8">
+                      {faq.question}
+                    </h4>
+                    <motion.div
+                      animate={{ rotate: openFaqIndex === index ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex-shrink-0"
+                    >
+                      <ChevronDown className={`w-6 h-6 ${
+                        openFaqIndex === index 
+                          ? 'text-emerald-500' 
+                          : 'text-gray-400'
+                      }`} />
+                    </motion.div>
+                  </div>
+                  
+                  <AnimatePresence>
+                    {openFaqIndex === index && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-6 pb-6 pt-0">
+                          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                              {faq.answer}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
               </motion.div>
             ))}
           </div>
