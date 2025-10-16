@@ -15,7 +15,7 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
   onSelectTemplate 
 }) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
-  const [showLiveDemo, setShowLiveDemo] = useState(false);
+  const [showLiveDemo, setShowLiveDemo] = useState(true); // Começa como true
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
 
