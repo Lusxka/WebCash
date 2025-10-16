@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Smartphone, Monitor, Code, Star, MessageSquare, Eye, Loader } from 'lucide-react';
+import { X, ExternalLink, Smartphone, Monitor, Code, Star, MessageSquare, Eye, Loader, Share2, Check } from 'lucide-react';
 import { Template } from '../types/template';
 
 interface TemplatePreviewProps {
@@ -15,9 +15,17 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
   onSelectTemplate 
 }) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
-  const [showLiveDemo, setShowLiveDemo] = useState(true); // Começa como true
+  const [showLiveDemo, setShowLiveDemo] = useState(true);
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (template && showLiveDemo) {
+      setIsIframeLoading(true);
+      setIframeError(false);
+    }
+  }, [template, showLiveDemo]);
 
   if (!template) return null;
 
@@ -32,11 +40,18 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
   };
 
   const toggleLiveDemo = () => {
-    if (!showLiveDemo) {
-      setIsIframeLoading(true);
-      setIframeError(false);
-    }
     setShowLiveDemo(!showLiveDemo);
+  };
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}?template=${template.id}`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar:', err);
+    }
   };
 
   return (
@@ -67,6 +82,30 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Share Button */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleShare}
+                className={`flex items-center px-4 py-2 rounded-lg transition-all ${
+                  copied
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check size={18} className="mr-2" />
+                    Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Share2 size={18} className="mr-2" />
+                    Compartilhar
+                  </>
+                )}
+              </motion.button>
+
               {/* Live Demo Toggle */}
               {template.demoUrl && (
                 <motion.button
@@ -135,12 +174,7 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                         ? 'w-full h-full' 
                         : 'w-[375px] h-[667px]'
                     }`}
-                    style={{
-                      maxWidth: viewMode === 'desktop' ? '100%' : '375px',
-                      maxHeight: viewMode === 'desktop' ? '100%' : '667px'
-                    }}
                   >
-                    {/* Loading Indicator */}
                     {isIframeLoading && (
                       <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg z-10">
                         <div className="text-center">
@@ -150,7 +184,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                       </div>
                     )}
 
-                    {/* Error Message */}
                     {iframeError && (
                       <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg z-10 p-8">
                         <div className="text-center max-w-md">
@@ -178,7 +211,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                       </div>
                     )}
 
-                    {/* Iframe */}
                     <iframe
                       src={template.demoUrl}
                       className="w-full h-full border-0 rounded-lg"
@@ -191,18 +223,19 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                     />
                   </motion.div>
 
-                  {/* Floating Open Button */}
-                  <motion.a
-                    href={template.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="absolute top-6 right-6 p-3 bg-emerald-500 text-white rounded-full shadow-lg hover:bg-emerald-600 transition-colors z-20"
-                    title="Abrir demo em nova aba"
-                  >
-                    <ExternalLink size={20} />
-                  </motion.a>
+                  {template.demoUrl && (
+                    <motion.a
+                      href={template.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="absolute top-6 right-6 p-3 bg-emerald-500 text-white rounded-full shadow-lg hover:bg-emerald-600 transition-colors z-20"
+                      title="Abrir demo em nova aba"
+                    >
+                      <ExternalLink size={20} />
+                    </motion.a>
+                  )}
                 </div>
               ) : (
                 <motion.div
@@ -224,7 +257,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
             {/* Sidebar */}
             <div className="w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 overflow-y-auto flex-shrink-0">
               <div className="p-6 space-y-6">
-                {/* Description */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     Descrição
@@ -234,7 +266,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </p>
                 </div>
 
-                {/* Categories */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                     Categorias
@@ -255,7 +286,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </div>
                 </div>
 
-                {/* Tech Stack */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                     Stack Tecnológico
@@ -276,7 +306,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </div>
                 </div>
 
-                {/* Responsive Level */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                     Nível Responsivo
@@ -300,7 +329,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </div>
                 </div>
 
-                {/* Pages Included */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                     Páginas Incluídas ({template.pages.length})
@@ -318,7 +346,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </ul>
                 </div>
 
-                {/* Key Features */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                     Recursos Principais
@@ -336,7 +363,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   </ul>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="space-y-3 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -363,7 +389,6 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({
                   )}
                 </div>
 
-                {/* Contact Info */}
                 <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4">
                   <h4 className="font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
                     Interessado neste template?
