@@ -147,7 +147,8 @@ const MovingStar = ({ delay, speed, layer }) => {
 const TemplateGrid = ({ onTemplateSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [showFeatured, setShowFeatured] = useState(false);
+  const [sortPopular, setSortPopular] = useState(false);
+  const [sortAlphabetical, setSortAlphabetical] = useState(false);
   const [filters, setFilters] = useState({
     category: 'Todos',
     style: 'Todos',
@@ -156,7 +157,7 @@ const TemplateGrid = ({ onTemplateSelect }) => {
   });
 
   const filteredTemplates = useMemo(() => {
-    return templates.filter(template => {
+    let result = templates.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            template.description.toLowerCase().includes(searchTerm.toLowerCase());
       
@@ -164,11 +165,26 @@ const TemplateGrid = ({ onTemplateSelect }) => {
       const matchesStyle = filters.style === 'Todos' || template.style === filters.style;
       const matchesAudience = filters.audience === 'Todos' || template.audience === filters.audience;
       const matchesFunction = filters.function === 'Todos' || template.function === filters.function;
-      const matchesFeatured = !showFeatured || template.featured;
 
-      return matchesSearch && matchesCategory && matchesStyle && matchesAudience && matchesFunction && matchesFeatured;
+      return matchesSearch && matchesCategory && matchesStyle && matchesAudience && matchesFunction;
     });
-  }, [searchTerm, filters, showFeatured]);
+
+    // Ordenação
+    if (sortPopular) {
+      result = [...result].sort((a, b) => {
+        // Featured templates primeiro
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return 0;
+      });
+    }
+
+    if (sortAlphabetical) {
+      result = [...result].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return result;
+  }, [searchTerm, filters, sortPopular, sortAlphabetical]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -182,10 +198,11 @@ const TemplateGrid = ({ onTemplateSelect }) => {
       function: 'Todos'
     });
     setSearchTerm('');
-    setShowFeatured(false);
+    setSortPopular(false);
+    setSortAlphabetical(false);
   };
 
-  const hasActiveFilters = Object.values(filters).some(v => v !== 'Todos') || searchTerm !== '' || showFeatured;
+  const hasActiveFilters = Object.values(filters).some(v => v !== 'Todos') || searchTerm !== '' || sortPopular || sortAlphabetical;
 
   return (
     <section id="templates" className="py-20 relative overflow-hidden bg-[#0f1419]">
@@ -281,23 +298,27 @@ const TemplateGrid = ({ onTemplateSelect }) => {
               </button>
 
               <button
-                onClick={() => setShowFeatured(!showFeatured)}
+                onClick={() => setSortPopular(!sortPopular)}
                 className={`px-5 py-3.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                  showFeatured
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25'
-                    : 'bg-[#1a1f2e] border border-gray-700/50 text-gray-300 hover:border-amber-500/50'
+                  sortPopular
+                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25'
+                    : 'bg-[#1a1f2e] border border-gray-700/50 text-gray-300 hover:border-cyan-500/50'
                 }`}
               >
-                <Star className={`w-5 h-5 ${showFeatured ? 'fill-white' : ''}`} />
-                <span className="hidden sm:inline">Premium</span>
+                <TrendingUp className="w-5 h-5" />
+                <span className="hidden sm:inline">Popular</span>
               </button>
 
               <button
-                className="px-5 py-3.5 rounded-lg font-medium transition-all flex items-center gap-2 bg-[#1a1f2e] border border-gray-700/50 text-gray-300 hover:border-cyan-500/50 hover:text-cyan-400 group"
-                title="Mais populares primeiro"
+                onClick={() => setSortAlphabetical(!sortAlphabetical)}
+                className={`px-5 py-3.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                  sortAlphabetical
+                    ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25'
+                    : 'bg-[#1a1f2e] border border-gray-700/50 text-gray-300 hover:border-purple-500/50'
+                }`}
+                title="Ordenar alfabeticamente"
               >
-                <TrendingUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline">Popular</span>
+                <span className="text-lg font-bold">A-Z</span>
               </button>
             </div>
           </div>
@@ -393,7 +414,7 @@ const TemplateGrid = ({ onTemplateSelect }) => {
             >
               <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/5 rounded-xl blur-xl transition-all duration-500" />
               
-              <div className="relative bg-[#1a1f2e] border border-gray-700/50 rounded-xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 flex flex-col hover:shadow-2xl hover:shadow-emerald-500/10">
+              <div className="relative bg-[#1a1f2e] border border-gray-700/50 rounded-xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 flex flex-col h-full hover:shadow-2xl hover:shadow-emerald-500/10">
                 <div className="relative overflow-hidden aspect-video">
                   <img
                     src={template.image}
@@ -412,8 +433,8 @@ const TemplateGrid = ({ onTemplateSelect }) => {
                   )}
                 </div>
 
-                <div className="p-5 flex flex-col justify-between">
-                  <div>
+                <div className="p-5 flex flex-col justify-between flex-grow">
+                  <div className="flex-grow">
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
                       {template.name}
                     </h3>
@@ -441,7 +462,7 @@ const TemplateGrid = ({ onTemplateSelect }) => {
                     </div>
                   </div>
 
-                  <button className="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 group/btn shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40">
+                  <button className="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 group/btn shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 mt-auto">
                     Ver Template
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </button>
