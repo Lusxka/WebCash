@@ -107,11 +107,11 @@ const templates = [
 ];
 
 // Componente de Estrela que muda de posição
-const MovingStar = ({ delay, speed, layer }) => {
-  const [position, setPosition] = useState({
-    x: Math.random() * 100,
-    y: Math.random() * 100
-  });
+const MovingStar = ({ delay, speed, layer, index }) => {
+  const [position, setPosition] = useState(() => ({
+    x: (index * 13.37) % 100,
+    y: (index * 17.89) % 100
+  }));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -211,21 +211,21 @@ const TemplateGrid = ({ onTemplateSelect }) => {
         {/* Camada 1 - Estrelas distantes (pequenas e lentas) */}
         <div className="absolute inset-0 opacity-30">
           {[...Array(60)].map((_, i) => (
-            <MovingStar key={`layer1-${i}`} delay={Math.random() * 3} speed={5000 + Math.random() * 3000} layer={1} />
+            <MovingStar key={`layer1-${i}`} index={i} delay={Math.random() * 3} speed={5000 + Math.random() * 3000} layer={1} />
           ))}
         </div>
 
         {/* Camada 2 - Estrelas médias (verdes) */}
         <div className="absolute inset-0 opacity-50">
           {[...Array(30)].map((_, i) => (
-            <MovingStar key={`layer2-${i}`} delay={Math.random() * 2} speed={4000 + Math.random() * 2000} layer={2} />
+            <MovingStar key={`layer2-${i}`} index={i + 60} delay={Math.random() * 2} speed={4000 + Math.random() * 2000} layer={2} />
           ))}
         </div>
 
         {/* Camada 3 - Estrelas próximas (grandes e rápidas - cyan) */}
         <div className="absolute inset-0 opacity-70">
           {[...Array(15)].map((_, i) => (
-            <MovingStar key={`layer3-${i}`} delay={Math.random() * 1} speed={3000 + Math.random() * 1500} layer={3} />
+            <MovingStar key={`layer3-${i}`} index={i + 90} delay={Math.random() * 1} speed={3000 + Math.random() * 1500} layer={3} />
           ))}
         </div>
 
