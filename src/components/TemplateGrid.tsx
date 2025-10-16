@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Filter, Search, Grid, List, Star, ArrowRight, X, Sparkles } from 'lucide-react';
+import { Filter, Search, Star, ArrowRight, X, Sparkles, TrendingUp } from 'lucide-react';
 
 // Mock data
 const categories = ['E-commerce', 'Portfólio', 'Corporativo', 'Blog', 'Landing Page', 'Dashboard'];
@@ -88,10 +88,48 @@ const templates = [
   }
 ];
 
+// Componente de Estrela que muda de posição
+const MovingStar = ({ delay, speed, layer }) => {
+  const [position, setPosition] = useState({
+    x: Math.random() * 100,
+    y: Math.random() * 100
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPosition({
+        x: Math.random() * 100,
+        y: Math.random() * 100
+      });
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [speed]);
+
+  const size = layer === 1 ? 1 : layer === 2 ? 2 : 3;
+  const color = layer === 1 ? 'bg-white' : layer === 2 ? 'bg-emerald-200' : 'bg-cyan-300';
+  const glow = layer === 1 ? 'rgba(255,255,255,0.6)' : layer === 2 ? 'rgba(16,185,129,0.6)' : 'rgba(34,211,238,0.8)';
+
+  return (
+    <div
+      className={`absolute ${color} rounded-full transition-all ease-in-out`}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${position.x}%`,
+        top: `${position.y}%`,
+        transitionDuration: `${speed}ms`,
+        boxShadow: `0 0 ${size * 3}px ${glow}`,
+        animation: `twinkle ${2 + Math.random() * 2}s ease-in-out infinite ${delay}s`
+      }}
+    />
+  );
+};
+
 const TemplateGrid = ({ onTemplateSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
+  const [showFeatured, setShowFeatured] = useState(false);
   const [filters, setFilters] = useState({
     category: 'Todos',
     style: 'Todos',
@@ -108,10 +146,11 @@ const TemplateGrid = ({ onTemplateSelect }) => {
       const matchesStyle = filters.style === 'Todos' || template.style === filters.style;
       const matchesAudience = filters.audience === 'Todos' || template.audience === filters.audience;
       const matchesFunction = filters.function === 'Todos' || template.function === filters.function;
+      const matchesFeatured = !showFeatured || template.featured;
 
-      return matchesSearch && matchesCategory && matchesStyle && matchesAudience && matchesFunction;
+      return matchesSearch && matchesCategory && matchesStyle && matchesAudience && matchesFunction && matchesFeatured;
     });
-  }, [searchTerm, filters]);
+  }, [searchTerm, filters, showFeatured]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -125,115 +164,45 @@ const TemplateGrid = ({ onTemplateSelect }) => {
       function: 'Todos'
     });
     setSearchTerm('');
+    setShowFeatured(false);
   };
 
-  const hasActiveFilters = Object.values(filters).some(v => v !== 'Todos') || searchTerm !== '';
+  const hasActiveFilters = Object.values(filters).some(v => v !== 'Todos') || searchTerm !== '' || showFeatured;
 
   return (
     <section id="templates" className="py-20 relative overflow-hidden bg-[#0f1419]">
-      {/* Fundo espacial com estrelas 3D animadas */}
-      <div className="absolute inset-0">
-        {/* Camada 1 - Estrelas distantes (pequenas) */}
-        <div className="absolute inset-0 opacity-40">
-          {[...Array(100)].map((_, i) => {
-            const size = Math.random() * 2 + 0.5;
-            return (
-              <div
-                key={`star1-${i}`}
-                className="absolute bg-white rounded-full"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  animation: `twinkle ${2 + Math.random() * 3}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 3}s`,
-                  boxShadow: `0 0 ${size * 2}px rgba(255, 255, 255, 0.8)`
-                }}
-              />
-            );
-          })}
+      {/* Fundo espacial com estrelas que mudam de lugar */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Camada 1 - Estrelas distantes (pequenas e lentas) */}
+        <div className="absolute inset-0 opacity-30">
+          {[...Array(60)].map((_, i) => (
+            <MovingStar key={`layer1-${i}`} delay={Math.random() * 3} speed={5000 + Math.random() * 3000} layer={1} />
+          ))}
         </div>
 
-        {/* Camada 2 - Estrelas médias */}
-        <div className="absolute inset-0 opacity-60">
-          {[...Array(50)].map((_, i) => {
-            const size = Math.random() * 3 + 1.5;
-            return (
-              <div
-                key={`star2-${i}`}
-                className="absolute bg-emerald-200 rounded-full"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  animation: `twinkleSlow ${3 + Math.random() * 4}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 4}s`,
-                  boxShadow: `0 0 ${size * 3}px rgba(16, 185, 129, 0.6)`
-                }}
-              />
-            );
-          })}
+        {/* Camada 2 - Estrelas médias (verdes) */}
+        <div className="absolute inset-0 opacity-50">
+          {[...Array(30)].map((_, i) => (
+            <MovingStar key={`layer2-${i}`} delay={Math.random() * 2} speed={4000 + Math.random() * 2000} layer={2} />
+          ))}
         </div>
 
-        {/* Camada 3 - Estrelas próximas (grandes) */}
-        <div className="absolute inset-0 opacity-80">
-          {[...Array(20)].map((_, i) => {
-            const size = Math.random() * 4 + 2;
-            return (
-              <div
-                key={`star3-${i}`}
-                className="absolute bg-cyan-300 rounded-full"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  animation: `twinkleFast ${1.5 + Math.random() * 2}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  boxShadow: `0 0 ${size * 4}px rgba(34, 211, 238, 0.8), 0 0 ${size * 8}px rgba(34, 211, 238, 0.4)`
-                }}
-              />
-            );
-          })}
+        {/* Camada 3 - Estrelas próximas (grandes e rápidas - cyan) */}
+        <div className="absolute inset-0 opacity-70">
+          {[...Array(15)].map((_, i) => (
+            <MovingStar key={`layer3-${i}`} delay={Math.random() * 1} speed={3000 + Math.random() * 1500} layer={3} />
+          ))}
         </div>
 
-        {/* Nebulosas sutis */}
+        {/* Nebulosas */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
         <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-cyan-600/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
       </div>
 
       <style>{`
         @keyframes twinkle {
-          0%, 100% { 
-            opacity: 0.2; 
-            transform: scale(0.8);
-          }
-          50% { 
-            opacity: 1; 
-            transform: scale(1.2);
-          }
-        }
-        @keyframes twinkleSlow {
-          0%, 100% { 
-            opacity: 0.3; 
-            transform: scale(0.9);
-          }
-          50% { 
-            opacity: 1; 
-            transform: scale(1.3);
-          }
-        }
-        @keyframes twinkleFast {
-          0%, 100% { 
-            opacity: 0.4; 
-            transform: scale(1) rotate(0deg);
-          }
-          50% { 
-            opacity: 1; 
-            transform: scale(1.5) rotate(180deg);
-          }
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.4); }
         }
       `}</style>
 
@@ -293,28 +262,25 @@ const TemplateGrid = ({ onTemplateSelect }) => {
                 <span className="hidden sm:inline">Filtros</span>
               </button>
 
-              <div className="flex bg-[#1a1f2e] border border-gray-700/50 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-3.5 transition-all ${
-                    viewMode === 'grid'
-                      ? 'bg-emerald-500 text-white'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <Grid className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-3.5 transition-all ${
-                    viewMode === 'list'
-                      ? 'bg-emerald-500 text-white'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                onClick={() => setShowFeatured(!showFeatured)}
+                className={`px-5 py-3.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                  showFeatured
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25'
+                    : 'bg-[#1a1f2e] border border-gray-700/50 text-gray-300 hover:border-amber-500/50'
+                }`}
+              >
+                <Star className={`w-5 h-5 ${showFeatured ? 'fill-white' : ''}`} />
+                <span className="hidden sm:inline">Premium</span>
+              </button>
+
+              <button
+                className="px-5 py-3.5 rounded-lg font-medium transition-all flex items-center gap-2 bg-[#1a1f2e] border border-gray-700/50 text-gray-300 hover:border-cyan-500/50 hover:text-cyan-400 group"
+                title="Mais populares primeiro"
+              >
+                <TrendingUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Popular</span>
+              </button>
             </div>
           </div>
 
@@ -400,19 +366,17 @@ const TemplateGrid = ({ onTemplateSelect }) => {
         </div>
 
         {/* Grid de Templates */}
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filteredTemplates.map((template) => (
             <div
               key={template.id}
               onClick={() => onTemplateSelect && onTemplateSelect(template)}
-              className={`group cursor-pointer relative ${viewMode === 'list' ? 'flex flex-col md:flex-row' : ''}`}
+              className="group cursor-pointer relative"
             >
-              {/* Glow effect verde */}
               <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/5 rounded-xl blur-xl transition-all duration-500" />
               
-              <div className={`relative bg-[#1a1f2e] border border-gray-700/50 rounded-xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 flex flex-col hover:shadow-2xl hover:shadow-emerald-500/10 ${viewMode === 'list' ? 'md:flex-row' : ''}`}>
-                {/* Imagem */}
-                <div className={`relative overflow-hidden ${viewMode === 'list' ? 'md:w-1/3' : 'aspect-video'}`}>
+              <div className="relative bg-[#1a1f2e] border border-gray-700/50 rounded-xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 flex flex-col hover:shadow-2xl hover:shadow-emerald-500/10">
+                <div className="relative overflow-hidden aspect-video">
                   <img
                     src={template.image}
                     alt={template.name}
@@ -430,8 +394,7 @@ const TemplateGrid = ({ onTemplateSelect }) => {
                   )}
                 </div>
 
-                {/* Conteúdo */}
-                <div className={`p-5 flex flex-col justify-between ${viewMode === 'list' ? 'md:w-2/3' : ''}`}>
+                <div className="p-5 flex flex-col justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
                       {template.name}
